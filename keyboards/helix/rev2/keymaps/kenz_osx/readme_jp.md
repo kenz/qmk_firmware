@@ -29,7 +29,7 @@ $ cd qmk_firmware
 qmk_firmwareでは各キーボードのコンパイルは、`<キーボード名>:<キーマップ名>`という指定で行います。
 
 ```
-$ make helix:default
+$ make helix:kenz_osx
 ```
 
 キーボードへの書き込みまで同時に行うには下記のように`:avrdude`を付けます。
