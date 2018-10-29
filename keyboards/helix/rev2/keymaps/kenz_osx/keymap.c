@@ -1,4 +1,4 @@
-https://www.huffingtonpost.jp/emmanuelle-turquet/eat-alone_b_16614786.html#include QMK_KEYBOARD_H
+#include QMK_KEYBOARD_H
 #include "bootloader.h"
 #ifdef PROTOCOL_LUFA
 #include "lufa.h"
@@ -27,14 +27,14 @@ extern uint8_t is_master;
 enum layer_number {
     _QWERTY = 0,
     _NUMBER,
-    _RAISE,
+    _MOVE,
     _ADJUST
 };
 
 enum custom_keycodes {
   QWERTY = SAFE_RANGE,
   NUMBER,
-  RAISE,
+  MOVE,
   ADJUST,
   BACKLIT,
   EISU,
@@ -66,7 +66,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |-----+-----+------+-----+------+-----+-----+-----+-----+-----+-----+-----+-----+------|
    * |Shift|  Z  |   X  |  C  |   V  |  B  |  F2 |  [  |  N  |  M  |  ,  |  .  |  /  |Shift |
    * |-----+-----+------+-----+------+-----+-----+-----+-----+-----+-----+-----+-----+------|
-   * | Ctrl| Alt |Adjust|Nunbe| LGUI |BackS| ESC |Enter|Space| GUI |LEFT |Down |  Up |Right |
+   * | Ctrl| Alt | LGUI |Move |Nunbe |BackS| ESC |Enter|Space| GUI |LEFT |Down |  Up |Right |
    * `--------------------------------------------------------------------------------------'
    */
   [_QWERTY] = LAYOUT( \
@@ -74,7 +74,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                      KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSLS, \
       KC_LCTL, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                      KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, \
       KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_F2,   KC_LBRC, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT, \
-      KC_LCTL, KC_LALT, ADJUST,  NUMBER,   KC_LGUI, KC_BSPC, KC_ESC,  KC_ENT,  KC_SPC,  KC_RGUI, KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT \
+      KC_LCTL, KC_LALT, KC_LGUI, MOVE,  NUMBER,    KC_BSPC, KC_ESC,  KC_ENT,  KC_SPC,  KC_RGUI, KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT \
       ),
 
   /* Numbe
@@ -94,32 +94,32 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                    KC_F6,   KC_F7,   KC_F8,   KC_F9,    KC_F10,  KC_F11, \
       _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                    KC_F6,   KC_F7,   KC_F8,   KC_F9,    KC_F10,  KC_F11, \
       _______, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                     KC_6,    KC_7,    KC_8,    KC_9,     KC_0,    KC_MINS, \
-      _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,KC_LBRC, KC_RBRC, KC_EQL,  KC_F12, \
+      _______, _______, _______, _______, _______, _______, _______, KC_RBRC, _______, _______,KC_LBRC, KC_RBRC,  KC_EQL,  KC_F12, \
       _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______ \
       ),
 
-  /* Raise
+  /* Move
    * ,-----------------------------------------.             ,-----------------------------------------.
-   * |   `  |   1  |   2  |   3  |   4  |   5  |             |   6  |   7  |   8  |   9  |   0  | Bksp |
+   * |      |      |      |      |      |      |             |      |      |      |      |      |      |
    * |------+------+------+------+------+------|             |------+------+------+------+------+------|
-   * |   `  |   1  |   2  |   3  |   4  |   5  |             |   6  |   7  |   8  |   9  |   0  | Del  |
+   * |      |      |  Up  |      |PageUp|      |             |PageUp|      |  Up  |      |      |      |
    * |------+------+------+------+------+------|             |------+------+------+------+------+------|
-   * |      |  F1  |  F2  |  F3  |  F4  |  F5  |             |  F6  |   -  |   =  |   [  |   ]  |  \   |
+   * |      | Left | Down |Right |PageDn|      |             |PageDn| Left | Down |Right |      |      |
    * |------+------+------+------+------+------+------+------+------+------+------+------+------+------|
-   * |      |  F7  |  F8  |  F9  |  F10 |  F11 |      |      |  F12 |      |      |PageDn|PageUp|      |
+   * |      |      |      |      |      |      |      |      |      |      |      |      |      |      |
    * |------+------+------+------+------+------+------+------+------+------+------+------+------+------|
    * |      |      |      |      |      |      |      |      |      |      | Next | Vol- | Vol+ | Play |
    * `-------------------------------------------------------------------------------------------------'
    */
-  [_RAISE] = LAYOUT( \
-      KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                      KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC, \
-      KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                      KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_DEL, \
-      _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                     KC_F6,   KC_MINS, KC_EQL,  KC_LBRC, KC_RBRC, KC_BSLS, \
-      _______, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  _______, _______, KC_F12,  _______, _______, KC_PGDN, KC_PGUP, _______, \
-      _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY \
+  [_MOVE] = LAYOUT( \
+      _______, _______, _______, _______, _______,  _______,                   _______, _______, _______, _______, _______, _______, \
+      _______, _______, KC_UP,   KC_PGUP, _______,  _______,                   KC_PGUP, _______, KC_UP,   _______, _______, _______, \
+      _______, KC_LEFT, KC_DOWN, KC_RIGHT,KC_PGDN,  _______,                   KC_PGDN, KC_LEFT, KC_DOWN, KC_RIGHT,_______, _______, \
+      _______, _______, _______, _______, _______,  _______, _______, _______, _______, _______, _______, _______, _______, _______, \
+      _______, _______, _______, _______, _______,  _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY \
       ),
 
-  /* Adjust (Number + Raise)
+  /* Adjust (Number + Move)
    * ,-----------------------------------------.             ,-----------------------------------------.
    * |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |             |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 |
    * |------+------+------+------+------+------|             |------+------+------+------+------+------|
@@ -153,14 +153,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |-----+-----+------+-----+------+-----|           |-----+-----+-----+-----+-----+------|
    * |Shift|  Z  |   X  |  C  |   V  |  B  |           |  N  |  M  |  ,  |  .  |  /  |Shift |
    * |-----+-----+------+-----+------+-----+-----------+-----+-----+-----+-----+-----+------|
-   * | Ctrl| Alt |Raise |Nunbe| LGUI |BackS| ESC |Enter|Space| GUI |LEFT |Down |  Up |Right |
+   * | Ctrl| Alt | Move |Nunbe| LGUI |BackS| ESC |Enter|Space| GUI |LEFT |Down |  Up |Right |
    * `--------------------------------------------------------------------------------------'
    */
   [_QWERTY] = LAYOUT( \
       KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                      KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSLS, \
       KC_LCTL, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                      KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, \
       KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                      KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT, \
-      KC_LCTL, KC_LALT, RAISE,   NUMBER,  KC_LGUI, KC_BSPC, KC_ESC,  KC_ENT,  KC_SPC,  KC_RGUI, KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT \
+      KC_LCTL, KC_LALT, MOVE,   NUMBER,  KC_LGUI, KC_BSPC, KC_ESC,  KC_ENT,  KC_SPC,  KC_RGUI, KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT \
   ),
 
   /* Numbe
@@ -180,25 +180,25 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       _______, _______, _______, _______, _______, _______,                  _______, _______, _______, _______,  KC_EQL,  KC_F12, \
       _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______ \
       ),
-  /* Raise
+  /* Move
    * ,-----------------------------------------.             ,-----------------------------------------.
-   * |   `  |   1  |   2  |   3  |   4  |   5  |             |   6  |   7  |   8  |   9  |   0  | Del  |
+   * |      |      |      |      |      |      |             |      |      |      |      |      |      |
    * |------+------+------+------+------+------|             |------+------+------+------+------+------|
-   * |      |  F1  |  F2  |  F3  |  F4  |  F5  |             |  F6  |   -  |   =  |   [  |   ]  |  \   |
+   * |      |      |  Up  |      |PageUp|      |             |PageUp|      |  Up  |      |      |      |
    * |------+------+------+------+------+------|             |------+------+------+------+------+------|
-   * |      |  F7  |  F8  |  F9  |  F10 |  F11 |             |  F12 |      |      |PageDn|PageUp|      |
-   * |------+------+------+------+------+------+-------------+------+------+------+------+------+------|
+   * |      | Left | Down |Right |PageDn|      |             |PageDn| Left | Down |Right |      |      |
+   * |------+------+------+------+------+------+------+------+------+------+------+------+------+------|
    * |      |      |      |      |      |      |      |      |      |      | Next | Vol- | Vol+ | Play |
    * `-------------------------------------------------------------------------------------------------'
    */
-  [_RAISE] = LAYOUT( \
-      KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                      KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_DEL, \
-      _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                     KC_F6,   KC_MINS, KC_EQL,  KC_LBRC, KC_RBRC, KC_BSLS, \
-      _______, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,                    KC_F12,  _______, _______, KC_PGDN, KC_PGUP, _______, \
-      _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY \
-      ),
+   [_MOVE] = LAYOUT( \
+       _______, _______, _______, _______, _______,  _______,                   _______, _______, _______, _______, _______, _______, \
+       _______, _______, KC_UP,   KC_PGUP, _______,  _______,                   KC_PGUP, _______, KC_UP,   _______, _______, _______, \
+       _______, KC_LEFT, KC_DOWN, KC_RIGHT,KC_PGDN,  _______,                   KC_PGDN, KC_LEFT, KC_DOWN, KC_RIGHT,_______, _______, \
+       _______, _______, _______, _______, _______,  _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY \
+       ),
 
-  /* Adjust (Number + Raise)
+  /* Adjust (Number + Move)
    * ,-----------------------------------------.             ,-----------------------------------------.
    * |      | Reset|      |      |      |      |             |      |      |      |      |      |  Del |
    * |------+------+------+------+------+------|             |------+------+------+------+------+------|
@@ -274,18 +274,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           #endif
         }
         layer_on(_NUMBER);
-        update_tri_layer_RGB(_NUMBER, _RAISE, _ADJUST);
+        update_tri_layer_RGB(_NUMBER, _MOVE, _ADJUST);
       } else {
         #ifdef RGBLIGHT_ENABLE
           rgblight_mode(RGB_current_mode);   // revert RGB to initial mode prior to RGB mode change
         #endif
         TOG_STATUS = false;
         layer_off(_NUMBER);
-        update_tri_layer_RGB(_NUMBER, _RAISE, _ADJUST);
+        update_tri_layer_RGB(_NUMBER, _MOVE, _ADJUST);
       }
       return false;
       break;
-    case RAISE:
+    case MOVE:
       if (record->event.pressed) {
         //not sure how to have keyboard check mode and set it to a variable, so my work around
         //uses another variable that would be set to true after the first time a reactive key is pressed.
@@ -296,15 +296,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             rgblight_mode(15);
           #endif
         }
-        layer_on(_RAISE);
-        update_tri_layer_RGB(_NUMBER, _RAISE, _ADJUST);
+        layer_on(_MOVE);
+        update_tri_layer_RGB(_NUMBER, _MOVE, _ADJUST);
       } else {
         #ifdef RGBLIGHT_ENABLE
           rgblight_mode(RGB_current_mode);  // revert RGB to initial mode prior to RGB mode change
         #endif
-        layer_off(_RAISE);
+        layer_off(_MOVE);
         TOG_STATUS = false;
-        update_tri_layer_RGB(_NUMBER, _RAISE, _ADJUST);
+        update_tri_layer_RGB(_NUMBER, _MOVE, _ADJUST);
       }
       return false;
       break;
@@ -429,9 +429,9 @@ void matrix_update(struct CharacterMatrix *dest,
 //assign the right code to your layers for OLED display
 #define L_BASE 0
 #define L_NUMBER (1<<_NUMBER)
-#define L_RAISE (1<<_RAISE)
+#define L_MOVE (1<<_MOVE)
 #define L_ADJUST (1<<_ADJUST)
-#define L_ADJUST_TRI (L_ADJUST|L_RAISE|L_NUMBER)
+#define L_ADJUST_TRI (L_ADJUST|L_MOVE|L_NUMBER)
 
 static void render_logo(struct CharacterMatrix *matrix) {
 
@@ -466,16 +466,20 @@ void render_status(struct CharacterMatrix *matrix) {
   matrix_write_P(matrix, PSTR("\nLayer: "));
     switch (layer_state) {
         case L_BASE:
+           rgblight_setrgb(255, 255, 255);
            matrix_write_P(matrix, PSTR("Default"));
            break;
-        case L_RAISE:
-           matrix_write_P(matrix, PSTR("Raise"));
+        case L_MOVE:
+           rgblight_setrgb(255, 128, 0);
+           matrix_write_P(matrix, PSTR("Move"));
            break;
         case L_NUMBER:
+           rgblight_setrgb(0, 255, 0);
            matrix_write_P(matrix, PSTR("Number"));
            break;
         case L_ADJUST:
         case L_ADJUST_TRI:
+           rgblight_setrgb(255, 0, 0);
            matrix_write_P(matrix, PSTR("Adjust"));
            break;
         default:
