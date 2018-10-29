@@ -466,20 +466,16 @@ void render_status(struct CharacterMatrix *matrix) {
   matrix_write_P(matrix, PSTR("\nLayer: "));
     switch (layer_state) {
         case L_BASE:
-           rgblight_setrgb(255, 255, 255);
            matrix_write_P(matrix, PSTR("Default"));
            break;
         case L_MOVE:
-           rgblight_setrgb(255, 128, 0);
            matrix_write_P(matrix, PSTR("Move"));
            break;
         case L_NUMBER:
-           rgblight_setrgb(0, 255, 0);
            matrix_write_P(matrix, PSTR("Number"));
            break;
         case L_ADJUST:
         case L_ADJUST_TRI:
-           rgblight_setrgb(255, 0, 0);
            matrix_write_P(matrix, PSTR("Adjust"));
            break;
         default:
